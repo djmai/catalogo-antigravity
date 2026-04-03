@@ -10,9 +10,9 @@ import { ConditionalFooter } from '@/components/ConditionalFooter'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Catálogo Online | Premium Store',
+  title: 'PREMIUM STORE | Catálogo Online',
   description: 'Descubre nuestra colección exclusiva de productos con los mejores precios y descuentos.',
-  keywords: ['catálogo', 'tienda online', 'ofertas', 'descuentos', 'productos premium']
+  keywords: ['PREMIUM STORE', 'catálogo', 'tienda online', 'ofertas', 'descuentos', 'productos premium']
 }
 
 export default async function RootLayout({

@@ -51,7 +51,7 @@ export function Header({ user }: { user?: any }) {
             <Link href="/dashboard">
               <Button className="rounded-2xl h-11 px-6 bg-slate-900 hover:bg-primary transition-all text-white font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 flex gap-2">
                 <LayoutDashboard className="h-4 w-4" />
-                Panel Admin
+                Mi Dashboard
               </Button>
             </Link>
           ) : (

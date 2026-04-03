@@ -24,22 +24,28 @@ export async function middleware(request: NextRequest) {
       .eq('id', user?.id)
       .single()
 
-    const role = profile?.role || 'admin' // TEMP BYPASS FOR DEV
+    const role = profile?.role || 'client'
 
-    // Admin-only routes
-    if (request.nextUrl.pathname.startsWith('/dashboard/usuarios') && role !== 'admin') {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
-    }
-
-    // Editor/Admin routes (products, discounts, packages)
+    // client role restriction: clients cannot access generic dashboard or admin/editor routes
+    const isAdminRoute = request.nextUrl.pathname.startsWith('/dashboard/usuarios') || request.nextUrl.pathname.startsWith('/dashboard/ajustes')
     const editorRoutes = ['/dashboard/productos', '/dashboard/categorias', '/dashboard/descuentos', '/dashboard/paquetes']
     const isEditorRoute = editorRoutes.some(route => request.nextUrl.pathname.startsWith(route))
-    
-    if (isEditorRoute && !['admin', 'editor'].includes(role)) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+
+    if (role === 'client') {
+      // Clients can ONLY access /dashboard/perfil or /dashboard/wishlist
+      const isClientPath = request.nextUrl.pathname === '/dashboard/perfil' || request.nextUrl.pathname === '/dashboard/wishlist'
+      if (!isClientPath) {
+        return NextResponse.redirect(new URL('/dashboard/perfil', request.url))
+      }
+    } else {
+      // Admin/Editor logic
+      if (isAdminRoute && role !== 'admin') {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
+      if (isEditorRoute && !['admin', 'editor'].includes(role)) {
+        return NextResponse.redirect(new URL('/dashboard', request.url))
+      }
     }
-    
-    // Clients can only access basic dashboard (profile) or get redirected if they try to access CRUDs
   }
 
   return response

@@ -1,0 +1,42 @@
+{
+  "node": {
+    "bde05768a2d6f9bdba0289c60a6bedd3ee839e1b": {
+      "workers": {
+        "app/dashboard/productos/nuevo/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CDesarrollo%5C%5CAntigravity%5C%5CAppCatalogoOnline%5C%5Csrc%5C%5Capp%5C%5Cactions%5C%5Cproducts.ts%22%2C%5B%22updateProductAction%22%2C%22createProductAction%22%5D%5D%5D&__client_imported__=true!",
+        "app/dashboard/productos/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CDesarrollo%5C%5CAntigravity%5C%5CAppCatalogoOnline%5C%5Csrc%5C%5Capp%5C%5Cactions%5C%5Cproducts.ts%22%2C%5B%22updateProductAction%22%2C%22createProductAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/dashboard/productos/nuevo/page": "action-browser",
+        "app/dashboard/productos/[id]/page": "action-browser"
+      }
+    },
+    "752681c53abdee3bf30ad5389ecade1d88254493": {
+      "workers": {
+        "app/dashboard/productos/nuevo/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CDesarrollo%5C%5CAntigravity%5C%5CAppCatalogoOnline%5C%5Csrc%5C%5Capp%5C%5Cactions%5C%5Cproducts.ts%22%2C%5B%22updateProductAction%22%2C%22createProductAction%22%5D%5D%5D&__client_imported__=true!",
+        "app/dashboard/productos/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CDesarrollo%5C%5CAntigravity%5C%5CAppCatalogoOnline%5C%5Csrc%5C%5Capp%5C%5Cactions%5C%5Cproducts.ts%22%2C%5B%22updateProductAction%22%2C%22createProductAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/dashboard/productos/nuevo/page": "action-browser",
+        "app/dashboard/productos/[id]/page": "action-browser"
+      }
+    },
+    "30342e40c32dc327fdbd8b4982207baa017d273f": {
+      "workers": {
+        "app/dashboard/categorias/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CDesarrollo%5C%5CAntigravity%5C%5CAppCatalogoOnline%5C%5Csrc%5C%5Capp%5C%5Cactions%5C%5Ccategories.ts%22%2C%5B%22createCategoryAction%22%2C%22updateCategoryAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/dashboard/categorias/[id]/page": "action-browser"
+      }
+    },
+    "5c9bfec6a76e9b780ae936aa2206d12337a50cd7": {
+      "workers": {
+        "app/dashboard/categorias/[id]/page": "(action-browser)/./node_modules/next/dist/build/webpack/loaders/next-flight-action-entry-loader.js?actions=%5B%5B%22D%3A%5C%5CDesarrollo%5C%5CAntigravity%5C%5CAppCatalogoOnline%5C%5Csrc%5C%5Capp%5C%5Cactions%5C%5Ccategories.ts%22%2C%5B%22createCategoryAction%22%2C%22updateCategoryAction%22%5D%5D%5D&__client_imported__=true!"
+      },
+      "layer": {
+        "app/dashboard/categorias/[id]/page": "action-browser"
+      }
+    }
+  },
+  "edge": {},
+  "encryptionKey": "Aq+FCowPef6soOMB+I5xe+Ljl/SAI0vrXxjsHMB4vMU="
+}

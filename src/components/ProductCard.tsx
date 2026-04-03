@@ -6,7 +6,8 @@ import { Product } from '@/types'
 import { useDiscountedPrice } from '@/lib/hooks/useDiscountedPrice'
 import { formatPrice } from '@/lib/utils/formatPrice'
 import { SafeImage } from './dashboard/SafeImage'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import { ArrowUpRight, ArrowRight, Heart } from 'lucide-react'
+import { WishlistToggle } from './WishlistToggle'
 
 interface ProductCardProps {
   product: Product
@@ -19,8 +20,12 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col pt-16">
       {/* Main Pink Container */}
-      <div className="relative w-full h-[380px] bg-gradient-to-br from-[#21A3A3] to-[#13C8B5] rounded-3xl rounded-tl-[80px] rounded-br-[4px] rounded-bl-[4px] shadow-lg hover:shadow-2xl transition-all duration-500 overflow-visible flex flex-col justify-end pb-4 pt-10 px-6 font-sans border-b-2 border-r-2 border-black/5">
+      <div className="relative w-full h-[380px] bg-gradient-to-br from-[#21A3A3] to-[#13C8B5] rounded-3xl rounded-tl-[80px] rounded-br-[4px] rounded-bl-[4px] shadow-lg hover:shadow-2xl transition-all duration-500 overflow-visible flex flex-col justify-end pb-4 pt-10 px-6 font-sans border-b-2 border-r-2 border-black/5 group">
         
+        {/* Wishlist Toggle Button */}
+        <div className="absolute top-8 right-6 z-30">
+          <WishlistToggle productId={product.id} className="h-10 w-10 shadow-xl" />
+        </div>
         {/* Background Decorative Swoosh (Simulated via SVG or abstract shape) */}
         <div className="absolute inset-0 overflow-hidden rounded-3xl rounded-tl-[80px] pointer-events-none opacity-20">
           <svg viewBox="0 0 200 200" className="absolute -bottom-10 -left-10 w-full h-full text-black transform -rotate-12 scale-150">

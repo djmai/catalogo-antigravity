@@ -12,7 +12,9 @@ import {
   Boxes,
   Users,
   LogOut,
-  Settings
+  Settings,
+  Heart,
+  UserCircle
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -28,11 +30,13 @@ export function SidebarNav({ isAdmin, isEditor }: { isAdmin: boolean, isEditor: 
   }
 
   const navItems = [
-    { label: 'Resumen', href: '/dashboard', icon: LayoutDashboard, show: true },
+    { label: 'Mi Perfil', href: '/dashboard/perfil', icon: UserCircle, show: true },
+    { label: 'Wishlist', href: '/dashboard/wishlist', icon: Heart, show: true },
+    { label: 'Resumen', href: '/dashboard', icon: LayoutDashboard, show: isAdmin || isEditor },
     { label: 'Productos', href: '/dashboard/productos', icon: Package, show: isEditor },
     { label: 'Categorías', href: '/dashboard/categorias', icon: Tag, show: isEditor },
     { label: 'Paquetes', href: '/dashboard/paquetes', icon: Boxes, show: isEditor },
-    { label: 'Reseñas', href: '/dashboard/resenas', icon: MessageSquare, show: true },
+    { label: 'Reseñas', href: '/dashboard/resenas', icon: MessageSquare, show: isEditor || isAdmin },
     { label: 'Usuarios', href: '/dashboard/usuarios', icon: Users, show: isAdmin },
     { label: 'Ajustes', href: '#', icon: Settings, show: isAdmin },
   ]

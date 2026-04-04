@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { 
   Heart, 
@@ -22,7 +23,7 @@ export default function WishlistPage() {
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
-  const fetchWishlist = async () => {
+  const fetchWishlist = useCallback(async () => {
     setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -53,11 +54,11 @@ export default function WishlistPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     fetchWishlist()
-  }, [])
+  }, [fetchWishlist])
 
   const removeFromWishlist = async (id: string) => {
     try {
@@ -124,11 +125,13 @@ export default function WishlistPage() {
                 <div className="relative mb-3 md:mb-6">
                   {/* Image Holder */}
                   <div className="aspect-square rounded-[18px] md:rounded-[35px] overflow-hidden bg-slate-100 shadow-inner group-hover:scale-95 transition-transform duration-700">
-                     <img 
+                      <Image 
                         src={imageUrl} 
                         alt={product.name} 
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 origin-center"
-                     />
+                        fill
+                        className="object-cover group-hover:scale-110 transition-transform duration-1000 origin-center"
+                        unoptimized
+                      />
                   </div>
                   
                   {/* Remove Button */}

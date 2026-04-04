@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { 
   Mail, 
@@ -52,21 +53,22 @@ export default function ContactPage() {
   const [loading, setLoading] = useState(true)
   const [contactInfo, setContactInfo] = useState<any>(null)
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data } = await supabase
-        .from('site_settings')
-        .select('value')
-        .eq('key', 'contact_info')
-        .single()
-      
-      if (data) {
-        setContactInfo(data.value)
-      }
-      setLoading(false)
+  const fetchData = useCallback(async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'contact_info')
+      .single()
+    
+    if (data) {
+      setContactInfo(data.value)
     }
-    fetchData()
+    setLoading(false)
   }, [supabase])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -104,10 +106,13 @@ export default function ContactPage() {
       <section className="relative h-[45vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 to-slate-800">
          <div className="absolute inset-0 opacity-20">
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent"></div>
-            <img 
+            <Image 
               src="https://images.unsplash.com/photo-1534536281715-e28d76689b4d" 
               alt="Background" 
-              className="w-full h-full object-cover" 
+              fill
+              className="object-cover" 
+              priority
+              unoptimized
             />
          </div>
          

@@ -2,33 +2,34 @@
 
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 export function ConditionalFooter() {
   const pathname = usePathname()
   
-  // Ocultar si estamos en cualquier parte del dashboard
-  if (pathname.startsWith('/dashboard')) return null
-
   const currentYear = new Date().getFullYear()
   const supabase = createClient()
   const [siteName, setSiteName] = useState('PREMIUMSTORE')
 
-  useEffect(() => {
-    async function fetchBranding() {
-      const { data } = await supabase
-        .from('site_settings')
-        .select('value')
-        .eq('key', 'site_branding')
-        .single()
-      
-      if (data?.value?.site_name) {
-        setSiteName(data.value.site_name)
-      }
+  const fetchBranding = useCallback(async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'site_branding')
+      .single()
+    
+    if (data?.value?.site_name) {
+      setSiteName(data.value.site_name)
     }
+  }, [supabase])
+
+  useEffect(() => {
     fetchBranding()
-  }, [])
+  }, [fetchBranding])
+
+  // Ocultar si estamos en cualquier parte del dashboard
+  if (pathname.startsWith('/dashboard')) return null
 
   return (
     <footer className="mt-auto border-t border-slate-100 bg-white py-12 relative z-10 overflow-hidden">

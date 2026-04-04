@@ -1,11 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Package } from 'lucide-react'
 import { SafeImage } from './dashboard/SafeImage'
 import { createClient } from '@/lib/supabase/client'
-import { useState, useEffect } from 'react'
 
 export function Hero() {
   const supabase = createClient()
@@ -23,23 +22,24 @@ export function Hero() {
     bg_color: '#13C8B5'
   })
 
-  useEffect(() => {
-    async function fetchData() {
-      const { data } = await supabase
-        .from('site_settings')
-        .select('*')
-        .in('key', ['site_branding', 'hero_settings'])
+  const fetchData = useCallback(async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('*')
+      .in('key', ['site_branding', 'hero_settings'])
+    
+    if (data) {
+      const brand = data.find(s => s.key === 'site_branding')?.value
+      const hero = data.find(s => s.key === 'hero_settings')?.value
       
-      if (data) {
-        const brand = data.find(s => s.key === 'site_branding')?.value
-        const hero = data.find(s => s.key === 'hero_settings')?.value
-        
-        if (brand?.site_name) setBranding(brand)
-        if (hero) setHeroSettings(hero)
-      }
+      if (brand?.site_name) setBranding(brand)
+      if (hero) setHeroSettings(hero)
     }
+  }, [supabase])
+
+  useEffect(() => {
     fetchData()
-  }, [])
+  }, [fetchData])
 
   const scrollToCatalog = () => {
     const catalog = document.getElementById('catalogo')

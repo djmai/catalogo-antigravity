@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { 
@@ -57,7 +58,7 @@ export default function ProfilePage() {
 
   const supabase = createClient()
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
@@ -80,8 +81,8 @@ export default function ProfilePage() {
           date_of_birth: profileRes.data.date_of_birth || '',
           email: profileRes.data.email || user.email || '',
           notes: profileRes.data.notes || '',
-          interests: profileRes.data.allergies || '', // mapping medical 'allergies' to e-commerce 'interests'
-          membership_status: profileRes.data.blood_type || 'Miembro' // mapping medical 'blood_type' to 'membership'
+          interests: profileRes.data.allergies || '', 
+          membership_status: profileRes.data.blood_type || 'Miembro' 
         })
       }
 
@@ -93,11 +94,11 @@ export default function ProfilePage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [fetchData])
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -270,7 +271,13 @@ export default function ProfilePage() {
               <div className="relative mb-10 mt-6">
                 <div className="w-56 h-56 rounded-[55px] border-[10px] border-slate-50 shadow-2xl overflow-hidden bg-slate-100 flex items-center justify-center rotate-2 group-hover:rotate-0 transition-transform duration-700 scale-105">
                   {(avatarPreview || profile?.avatar_url) ? (
-                    <img src={avatarPreview || profile.avatar_url} alt="Perfil" className="w-full h-full object-cover" />
+                    <Image 
+                      src={avatarPreview || profile.avatar_url} 
+                      alt="Perfil" 
+                      fill 
+                      className="object-cover" 
+                      unoptimized
+                    />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-100 flex items-center justify-center">
                        <User className="h-24 w-24 text-slate-300" />

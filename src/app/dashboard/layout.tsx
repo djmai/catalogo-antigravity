@@ -5,6 +5,7 @@ import { Bell, LayoutDashboard, Home, Menu } from 'lucide-react'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
 import { MobileSidebar } from '@/components/dashboard/MobileSidebar'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default async function DashboardLayout({
   children,
@@ -49,7 +50,13 @@ export default async function DashboardLayout({
           <div className="relative">
             <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-[#7375A5] shadow-xl">
                {profile?.avatar_url ? (
-                 <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                 <Image 
+                   src={profile.avatar_url} 
+                   alt="Profile" 
+                   fill
+                   className="object-cover" 
+                   unoptimized
+                 />
                ) : (
                  <span className="text-[#2B364A] text-3xl font-black uppercase">
                    {profile?.email?.[0] || 'U'}
@@ -81,8 +88,14 @@ export default async function DashboardLayout({
           <div className="flex items-center gap-2 md:gap-4">
             <MobileSidebar isAdmin={isAdmin} isEditor={isEditor} profile={profile} />
             {branding.logo_url ? (
-              <div className="h-10 md:h-12 flex items-center">
-                 <img src={branding.logo_url} alt={branding.site_name} className="h-full w-auto object-contain" />
+              <div className="h-10 md:h-12 flex items-center relative w-32 md:w-48">
+                 <Image 
+                   src={branding.logo_url} 
+                   alt={branding.site_name} 
+                   fill
+                   className="object-contain" 
+                   unoptimized
+                 />
               </div>
             ) : (
               <h1 className="text-xl md:text-2xl font-black tracking-tight text-[#2B364A] uppercase italic">

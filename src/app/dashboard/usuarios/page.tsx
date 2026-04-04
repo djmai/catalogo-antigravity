@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { 
   Table, 
@@ -63,7 +63,7 @@ export default function AdminUsersPage() {
   
   const supabase = createClient()
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true)
     try {
       const { data } = await supabase
@@ -76,11 +76,11 @@ export default function AdminUsersPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [supabase])
 
   useEffect(() => {
     fetchUsers()
-  }, [])
+  }, [fetchUsers])
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -237,7 +237,7 @@ export default function AdminUsersPage() {
                     </Badge>
                   ) : (
                     <Badge className="bg-rose-50 text-rose-700 border-none px-3 py-1 font-black text-[10px] uppercase tracking-widest rounded-lg">
-                      <RotateCw className="mr-1 h-3 w-3 animate-spin duration-[3000ms]" />
+                      <RotateCw className="mr-1 h-3 w-3 animate-spin duration-&lsqb;3000ms&rsqb;" />
                       Pendiente
                     </Badge>
                   )}

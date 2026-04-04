@@ -68,7 +68,7 @@ export default function CatalogPage() {
       }
     }
     fetchData()
-  }, [])
+  }, [supabase])
 
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 12

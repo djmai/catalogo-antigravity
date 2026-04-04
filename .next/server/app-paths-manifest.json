@@ -1,7 +1,25 @@
 {
+  "/_not-found": "app/_not-found.js",
+  "/auth/callback/route": "app/auth/callback/route.js",
+  "/auth/reset-password/page": "app/auth/reset-password/page.js",
   "/contacto/page": "app/contacto/page.js",
-  "/page": "app/page.js",
-  "/nosotros/page": "app/nosotros/page.js",
   "/login/page": "app/login/page.js",
-  "/dashboard/configuracion/page": "app/dashboard/configuracion/page.js"
+  "/nosotros/page": "app/nosotros/page.js",
+  "/producto/[slug]/page": "app/producto/[slug]/page.js",
+  "/page": "app/page.js",
+  "/dashboard/descuentos/page": "app/dashboard/descuentos/page.js",
+  "/dashboard/configuracion/page": "app/dashboard/configuracion/page.js",
+  "/dashboard/paquetes/page": "app/dashboard/paquetes/page.js",
+  "/dashboard/perfil/page": "app/dashboard/perfil/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/productos/%5Bid%5D/page": "app/dashboard/productos/%5Bid%5D/page.js",
+  "/dashboard/productos/page": "app/dashboard/productos/page.js",
+  "/dashboard/resenas/page": "app/dashboard/resenas/page.js",
+  "/dashboard/usuarios/page": "app/dashboard/usuarios/page.js",
+  "/dashboard/wishlist/page": "app/dashboard/wishlist/page.js",
+  "/dashboard/categorias/page": "app/dashboard/categorias/page.js",
+  "/dashboard/categorias/[id]/page": "app/dashboard/categorias/[id]/page.js",
+  "/dashboard/productos/[id]/page": "app/dashboard/productos/[id]/page.js",
+  "/dashboard/productos/nuevo/page": "app/dashboard/productos/nuevo/page.js",
+  "/dashboard/categorias/nuevo/page": "app/dashboard/categorias/nuevo/page.js"
 }

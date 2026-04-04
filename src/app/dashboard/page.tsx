@@ -1,4 +1,5 @@
 import React from 'react'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
 import { 
@@ -266,8 +267,18 @@ export default async function DashboardPage() {
               <div className="absolute inset-0 bg-gradient-to-br from-[#13C8B5]/10 to-transparent"></div>
               <div className="relative z-10 space-y-10 h-full flex flex-col pt-4">
                  <div className="flex flex-col items-center text-center">
-                    <div className="h-28 w-28 rounded-[40px] bg-white/10 p-1 mb-6 border border-white/20 relative rotate-6 group-hover:rotate-0 transition-all duration-500 shadow-2xl">
-                       {profile?.avatar_url ? <img src={profile.avatar_url} className="w-full h-full object-cover rounded-[34px]" /> : <UserCircle className="h-full w-full text-white/50 p-6" />}
+                    <div className="h-28 w-28 rounded-[40px] bg-white/10 p-1 mb-6 border border-white/20 relative rotate-6 group-hover:rotate-0 transition-all duration-500 shadow-2xl overflow-hidden">
+                       {profile?.avatar_url ? (
+                         <Image 
+                           src={profile.avatar_url} 
+                           alt="Avatar de Usuario" 
+                           fill 
+                           className="object-cover" 
+                           unoptimized
+                         />
+                       ) : (
+                         <UserCircle className="h-full w-full text-white/50 p-6" />
+                       )}
                     </div>
                     <div className="px-4 w-full">
                        <h4 className="text-2xl font-black text-white italic truncate tracking-tight uppercase">{profile?.full_name?.split(' ')[0] || 'Mi Perfil'}</h4>

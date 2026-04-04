@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
+import NextImage from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { ShieldCheck, User, LayoutDashboard, LogIn, Menu, X } from 'lucide-react'
@@ -51,11 +52,13 @@ export function Header({ user }: { user?: any }) {
       <div className="container mx-auto flex h-16 sm:h-20 items-center justify-between px-6">
         <Link href="/" className="flex items-center gap-3 group shrink-0">
           {branding.logo_url ? (
-            <div className="h-8 sm:h-10 relative">
-              <img 
+            <div className="h-8 sm:h-10 relative w-32 sm:w-48">
+              <NextImage 
                 src={branding.logo_url} 
                 alt={branding.site_name} 
-                className="h-full w-auto object-contain transition-transform duration-500 group-hover:scale-105" 
+                fill
+                className="object-contain transition-transform duration-500 group-hover:scale-105" 
+                unoptimized
               />
             </div>
           ) : (

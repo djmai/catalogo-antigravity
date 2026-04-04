@@ -13,6 +13,8 @@ export async function createProductAction(formData: FormData) {
   const base_price = parseFloat(formData.get('base_price') as string)
   const category_id = (formData.get('category_id') as string) || null
   const is_active = formData.get('is_active') === 'true'
+  const tagsStr = formData.get('tags') as string
+  const tags = tagsStr ? tagsStr.split(',').filter(Boolean) : []
   
   // Generar un slug simple a partir del nombre si no se provee uno válido
   let slug = formData.get('slug') as string
@@ -30,7 +32,8 @@ export async function createProductAction(formData: FormData) {
       description_long,
       base_price,
       category_id,
-      is_active
+      is_active,
+      tags
     })
     .select()
     .single()
@@ -95,6 +98,8 @@ export async function updateProductAction(id: string, formData: FormData) {
   const base_price = parseFloat(formData.get('base_price') as string)
   const category_id = (formData.get('category_id') as string) || null
   const is_active = formData.get('is_active') === 'true'
+  const tagsStr = formData.get('tags') as string
+  const tags = tagsStr ? tagsStr.split(',').filter(Boolean) : []
   
   let slug = formData.get('slug') as string
   if (!slug) {
@@ -104,7 +109,7 @@ export async function updateProductAction(id: string, formData: FormData) {
   const { data: product, error } = await supabase
     .from('products')
     .update({
-      name, slug, description_short, description_long, base_price, category_id, is_active
+      name, slug, description_short, description_long, base_price, category_id, is_active, tags
     })
     .eq('id', id)
     .select()

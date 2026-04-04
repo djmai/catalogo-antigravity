@@ -1,6 +1,9 @@
 export function formatPrice(price: number) {
-  return new Intl.NumberFormat('es-MX', {
+  if (price === undefined || price === null) return "$0.00";
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
-    currency: 'MXN',
+    currency: 'USD', // Forces the standard $ symbol
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
   }).format(price)
 }

@@ -184,6 +184,7 @@ export function DiscountForm({ products, initialData, onClose }: DiscountFormPro
                     type="number" 
                     {...field} 
                     step="0.01"
+                    lang="en-US"
                     className="h-12 rounded-xl bg-slate-50 border-none focus:ring-primary shadow-none font-black text-lg"
                   />
                 </FormControl>

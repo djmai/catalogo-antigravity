@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm, useFieldArray } from 'react-hook-form'
 import * as z from 'zod'
@@ -28,8 +29,10 @@ import {
 } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { toast } from 'react-hot-toast'
-import { Loader2, Save, Boxes, Plus, Trash2, Package as PackageIcon } from 'lucide-react'
-import { useRouter } from 'next/navigation'
+import { Loader2, Save, Boxes, Plus, Trash2, Package as PackageIcon, Camera } from 'lucide-react'
+import { createPackageAction, updatePackageAction } from '@/app/actions/packages'
+import { SafeImage } from './SafeImage'
+import { TagInput } from './TagInput'
 
 const packageSchema = z.object({
   name: z.string().min(3, 'Nombre requerido'),
@@ -37,6 +40,7 @@ const packageSchema = z.object({
   description: z.string().optional(),
   special_price: z.preprocess((val) => Number(val), z.number().min(0, 'Precio inválido')),
   is_active: z.boolean().default(true),
+  tags: z.array(z.string()).default([]),
   products: z.array(z.object({
     product_id: z.string().min(1, 'Selecciona un producto'),
     quantity: z.preprocess((val) => Number(val), z.number().min(1, 'Mínimo 1')),
@@ -45,14 +49,17 @@ const packageSchema = z.object({
 
 interface PackageFormProps {
   allProducts: Product[]
-  initialData?: any // Complete Package with products
+  initialData?: any // Complete Package with products and images
   onClose: () => void
 }
 
 export function PackageForm({ allProducts, initialData, onClose }: PackageFormProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  const [existingImages, setExistingImages] = useState<any[]>(
+    initialData?.package_images || []
+  )
+  const [removedImageIds, setRemovedImageIds] = useState<string[]>([])
 
   const form = useForm<z.infer<typeof packageSchema>>({
     resolver: zodResolver(packageSchema),
@@ -62,6 +69,7 @@ export function PackageForm({ allProducts, initialData, onClose }: PackageFormPr
       description: initialData?.description || '',
       special_price: initialData?.special_price || 0,
       is_active: initialData?.is_active ?? true,
+      tags: initialData?.tags || [],
       products: initialData?.package_products?.map((pp: any) => ({
         product_id: pp.product_id,
         quantity: pp.quantity
@@ -74,44 +82,49 @@ export function PackageForm({ allProducts, initialData, onClose }: PackageFormPr
     name: "products"
   })
 
+  const handleRemoveImage = (id: string) => {
+    setExistingImages(prev => prev.filter(img => img.id !== id))
+    setRemovedImageIds(prev => [...prev, id])
+  }
+
   const onSubmit = async (values: z.infer<typeof packageSchema>) => {
     setLoading(true)
     try {
-      const packageData = {
-        name: values.name,
-        slug: values.slug,
-        description: values.description,
-        special_price: values.special_price,
-        is_active: values.is_active,
-      }
-
-      let packageId = initialData?.id
-
-      if (initialData) {
-        const { error } = await supabase.from('packages').update(packageData).eq('id', initialData.id)
-        if (error) throw error
-      } else {
-        const { data, error } = await supabase.from('packages').insert(packageData).select().single()
-        if (error) throw error
-        packageId = data.id
-      }
-
-      // Sync products: Delete current and insert new
-      await supabase.from('package_products').delete().eq('package_id', packageId)
+      const formData = new FormData()
+      formData.append('name', values.name)
+      formData.append('slug', values.slug)
+      formData.append('description', values.description || '')
+      formData.append('special_price', values.special_price.toString())
+      formData.append('is_active', values.is_active.toString())
+      formData.append('tags', values.tags.join(','))
+      formData.append('products', JSON.stringify(values.products))
       
-      const { error: productsError } = await supabase.from('package_products').insert(
-        values.products.map(p => ({
-          package_id: packageId,
-          product_id: p.product_id,
-          quantity: p.quantity,
-        }))
-      )
+      if (removedImageIds.length > 0) {
+        formData.append('removed_images', removedImageIds.join(','))
+      }
 
-      if (productsError) throw productsError
+      // Handle new files
+      const fileInput = document.getElementById('package-images') as HTMLInputElement
+      if (fileInput?.files) {
+        for (let i = 0; i < fileInput.files.length; i++) {
+          formData.append('images', fileInput.files[i])
+        }
+      }
 
-      toast.success(initialData ? 'Paquete actualizado con éxito' : 'Paquete creado con éxito')
-      router.refresh()
-      onClose()
+      let res;
+      if (initialData?.id) {
+        res = await updatePackageAction(initialData.id, formData)
+      } else {
+        res = await createPackageAction(formData)
+      }
+
+      if (res.success) {
+        toast.success(initialData ? 'Paquete actualizado con éxito' : 'Paquete creado con éxito')
+        router.refresh()
+        onClose()
+      } else {
+        throw new Error(res.error)
+      }
     } catch (error: any) {
       toast.error('Ocurrió un error: ' + error.message)
       console.error('Error in PackageForm:', error)
@@ -178,6 +191,40 @@ export function PackageForm({ allProducts, initialData, onClose }: PackageFormPr
             </FormItem>
           )}
         />
+
+        {/* Images Section */}
+        <div className="space-y-4 border-t border-gray-50 pt-6">
+          <label className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+            <Camera className="h-4 w-4" />
+            Fotografías del Paquete <span className="text-muted-foreground font-normal">(Opcional - Reemplazan a las fotos de productos)</span>
+          </label>
+          <div className="relative">
+            <Input 
+              id="package-images" 
+              type="file" 
+              multiple 
+              accept="image/*"
+              className="h-12 pt-3 rounded-xl bg-slate-50 border-none focus:ring-primary shadow-none font-bold file:mr-4 file:py-0.5 file:px-3 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-slate-900 file:text-white"
+            />
+          </div>
+          
+          {existingImages.length > 0 && (
+            <div className="flex flex-wrap gap-3 mt-4 bg-slate-50/50 p-4 rounded-2xl border border-dashed border-slate-200">
+               {existingImages.map((img) => (
+                 <div key={img.id} className="relative w-16 h-16 rounded-xl border border-slate-200 overflow-hidden group">
+                   <SafeImage src={img.image_url} alt="Pack" className="w-full h-full object-cover" />
+                   <button 
+                     type="button" 
+                     onClick={() => handleRemoveImage(img.id)}
+                     className="absolute inset-0 bg-red-500/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                   >
+                     <Trash2 className="h-4 w-4" />
+                   </button>
+                 </div>
+               ))}
+            </div>
+          )}
+        </div>
 
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -260,9 +307,12 @@ export function PackageForm({ allProducts, initialData, onClose }: PackageFormPr
             name="special_price"
             render={({ field }: { field: any }) => (
               <FormItem>
-                <FormLabel className="text-xs font-black uppercase tracking-widest">Precio Especial del Pack ($)</FormLabel>
+                <div className="flex items-center justify-between mb-1">
+                  <FormLabel className="text-xs font-black uppercase tracking-widest">Precio Especial del Pack ($)</FormLabel>
+                  <span className="text-[9px] font-black text-amber-500 uppercase tracking-tighter bg-amber-50 px-2 py-0.5 rounded-md italic">0 = Cotizar</span>
+                </div>
                 <FormControl>
-                  <Input type="number" {...field} className="h-12 rounded-xl bg-slate-50 border-none focus:ring-primary shadow-none font-black text-lg" />
+                  <Input type="number" step="0.01" lang="en-US" {...field} placeholder="Usa 0 para cotizar" className="h-12 rounded-xl bg-slate-50 border-none focus:ring-primary shadow-none font-black text-lg" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -281,6 +331,21 @@ export function PackageForm({ allProducts, initialData, onClose }: PackageFormPr
             )}
           />
         </div>
+
+        <FormField
+          control={form.control}
+          name="tags"
+          render={({ field }: { field: any }) => (
+            <FormItem className="border-t border-gray-50 pt-6">
+               <TagInput 
+                tags={field.value} 
+                setTags={(newTags) => form.setValue('tags', newTags)} 
+                label="Etiquetas del Paquete" 
+                placeholder="Ej. Kit, Regalo, Gamer..."
+              />
+            </FormItem>
+          )}
+        />
 
         <div className="flex justify-end gap-3 pt-4">
           <Button type="button" variant="ghost" onClick={onClose} className="rounded-xl font-bold">

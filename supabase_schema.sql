@@ -107,14 +107,19 @@ ALTER TABLE public.discounts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.packages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.package_products ENABLE ROW LEVEL SECURITY;
 
--- Perfiles: lectura para usuarios autenticados
-CREATE POLICY "Usuarios pueden ver perfiles" ON profiles
-  FOR SELECT USING (auth.role() = 'authenticated');
+-- Perfiles: solo el dueño puede ver su propio perfil, admins ven todos
+CREATE POLICY "Usuarios pueden ver su propio perfil" ON profiles
+  FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Admin puede ver todos los perfiles" ON profiles
+  FOR SELECT USING (
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+  );
 
 -- Admin puede modificar perfiles
 CREATE POLICY "Admin puede modificar perfiles" ON profiles
   FOR ALL TO authenticated USING (
-    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role = 'admin')
+    EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
   );
 
 -- Productos: lectura pública, escritura solo admin/editor
@@ -173,5 +178,37 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
--- 12. Storage - Nota: Supabase Storage policies se manejan separate
+-- 12. Tabla de Reseñas
+CREATE TABLE IF NOT EXISTS public.reviews (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
+  rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+  comment TEXT NOT NULL,
+  user_email TEXT NOT NULL,
+  user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  status TEXT NOT NULL CHECK (status IN ('pending', 'approved', 'rejected')) DEFAULT 'pending',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_reviews_product ON reviews(product_id);
+CREATE INDEX IF NOT EXISTS idx_reviews_status ON reviews(status);
+CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id);
+
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+
+-- Reseñas: lectura pública solo si están aprobadas
+CREATE POLICY "Reseñas aprobadas lectura pública" ON reviews 
+  FOR SELECT USING (status = 'approved');
+
+-- Reseñas: inserción libre para cualquier usuario (anónimas)
+CREATE POLICY "Inserción libre de reseñas" ON reviews 
+  FOR INSERT WITH CHECK (true);
+
+-- Reseñas: administración para admin/editor
+CREATE POLICY "Reseñas escritura admin/editor" ON reviews
+  FOR ALL TO authenticated USING (
+    EXISTS (SELECT 1 FROM profiles WHERE id = auth.uid() AND role IN ('admin', 'editor'))
+  );
+
+-- 13. Storage - Nota: Supabase Storage policies se manejan separate
 -- INSERT INTO storage.buckets (id, name, public) VALUES ('product-images', 'product-images', true) ON CONFLICT DO NOTHING;

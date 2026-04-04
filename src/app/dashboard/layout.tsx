@@ -1,8 +1,9 @@
 import React, { ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { Bell, LayoutDashboard, Home } from 'lucide-react'
+import { Bell, LayoutDashboard, Home, Menu } from 'lucide-react'
 import { SidebarNav } from '@/components/dashboard/SidebarNav'
+import { MobileSidebar } from '@/components/dashboard/MobileSidebar'
 import Link from 'next/link'
 
 export default async function DashboardLayout({
@@ -27,6 +28,14 @@ export default async function DashboardLayout({
   const isAdmin = role === 'admin'
   const isEditor = ['admin', 'editor'].includes(role)
   const isClient = role === 'client'
+  
+  const { data: brandingData } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'site_branding')
+    .single()
+    
+  const branding = brandingData?.value || { site_name: 'PREMIUM HUB', logo_url: '' }
 
   return (
     <div className="flex h-screen bg-[#f2f4f8] overflow-hidden font-sans">
@@ -35,10 +44,6 @@ export default async function DashboardLayout({
       <aside className="hidden md:flex flex-col bg-[#2B364A] relative shrink-0">
         <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-transparent pointer-events-none"></div>
         
-        <div className="p-10 pb-0 flex items-center justify-start gap-3 z-20">
-           <span className="text-white font-black text-xl tracking-tighter uppercase text-slate-100">PREMIUM STORE</span>
-        </div>
-
         {/* User Card inside Sidebar (Top) */}
         <div className="p-8 pb-4 flex flex-col items-center justify-center relative z-10 space-y-3 pt-12">
           <div className="relative">
@@ -72,14 +77,18 @@ export default async function DashboardLayout({
       {/* Main Content Area */}
       <div className="flex flex-col flex-1 min-w-0 h-screen overflow-hidden relative">
         {/* Top Header */}
-        <header className="h-24 bg-white/50 backdrop-blur-md flex items-center justify-between px-10 shrink-0 relative z-20 w-full border-b border-slate-200/40">
-          <div className="flex items-center gap-2">
-            <div className="h-10 w-10 bg-[#2B364A] rounded-xl flex items-center justify-center shadow-lg">
-               <span className="text-[#ffc64d] font-black italic">K</span>
-            </div>
-            <h1 className="text-2xl font-black tracking-tight text-[#2B364A] ml-2">
-              PREMIUM HUB
-            </h1>
+        <header className="h-20 md:h-24 bg-white/50 backdrop-blur-md flex items-center justify-between px-4 md:px-10 shrink-0 relative z-20 w-full border-b border-slate-200/40">
+          <div className="flex items-center gap-2 md:gap-4">
+            <MobileSidebar isAdmin={isAdmin} isEditor={isEditor} profile={profile} />
+            {branding.logo_url ? (
+              <div className="h-10 md:h-12 flex items-center">
+                 <img src={branding.logo_url} alt={branding.site_name} className="h-full w-auto object-contain" />
+              </div>
+            ) : (
+              <h1 className="text-xl md:text-2xl font-black tracking-tight text-[#2B364A] uppercase italic">
+                {branding.site_name}
+              </h1>
+            )}
           </div>
 
           <div className="flex items-center gap-6">
@@ -96,11 +105,11 @@ export default async function DashboardLayout({
               <div className="absolute top-2.5 right-3 w-2 h-2 bg-[#13C8B5] rounded-full border-2 border-white"></div>
             </div>
             
-            <div className="bg-slate-900 group transition-all p-1.5 rounded-2xl shadow-xl flex items-center justify-center pr-5 gap-3 cursor-pointer">
-               <div className="h-9 w-9 rounded-xl bg-[#ffc64d] flex items-center justify-center shadow-inner group-hover:scale-95 transition-transform">
-                 <span className="text-slate-900 text-sm font-black uppercase">{profile?.email?.[0] || 'U'}</span>
+            <div className="bg-slate-900 group transition-all p-1.5 rounded-2xl shadow-xl flex items-center justify-center sm:pr-5 px-1 sm:gap-3 cursor-pointer">
+               <div className="h-8 w-8 sm:h-9 sm:w-9 rounded-xl bg-[#ffc64d] flex items-center justify-center shadow-inner group-hover:scale-95 transition-transform">
+                 <span className="text-slate-900 text-xs sm:text-sm font-black uppercase">{profile?.email?.[0] || 'U'}</span>
                </div>
-               <div className="flex flex-col">
+               <div className="hidden sm:flex flex-col">
                   <span className="text-xs font-black text-white leading-none capitalize">{profile?.full_name?.split(' ')[0] || profile?.email?.split('@')[0]}</span>
                   <span className="text-[9px] font-bold text-[#ffc64d] uppercase tracking-widest mt-1">
                     {role === 'admin' ? 'Administrador' : role === 'editor' ? 'Editor' : 'Cliente'}
@@ -111,7 +120,7 @@ export default async function DashboardLayout({
         </header>
 
         {/* Dynamic Content - Independent Scroll */}
-        <main className="flex-1 overflow-y-auto px-10 py-10 custom-scrollbar bg-[#f2f4f8]">
+        <main className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 custom-scrollbar bg-[#f2f4f8]">
           <div className="max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
             {children}
           </div>

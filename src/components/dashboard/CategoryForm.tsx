@@ -36,7 +36,7 @@ export function CategoryForm({ initialData }: { initialData?: any }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-xl relative max-w-2xl max-h-full">
+    <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-xl relative w-full h-full">
       {errorMsg && (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100/50 flex items-center gap-2">
            <Ban className="h-5 w-5" />

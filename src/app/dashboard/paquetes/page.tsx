@@ -39,7 +39,7 @@ export default function AdminPackagesPage() {
     try {
       const { data: pkgData } = await supabase
         .from('packages')
-        .select('*, package_products(product_id, quantity, products(name))')
+        .select('*, package_products(product_id, quantity, products(name)), package_images(id, image_url)')
         .order('created_at', { ascending: false })
       
       const { data: prodData } = await supabase
@@ -192,7 +192,7 @@ export default function AdminPackagesPage() {
       </div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl rounded-3xl p-8 border-none bg-white shadow-2xl">
+        <DialogContent className="max-w-7xl rounded-3xl p-8 border-none bg-white shadow-2xl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black text-slate-900">
               {selectedPackage ? 'Editar Paquete' : 'Nuevo Paquete'}

@@ -112,18 +112,18 @@ export default function WishlistPage() {
            </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
           {items.map((item) => {
             const product = item.product;
             const imageUrl = product.images?.[0]?.image_url || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800';
             
             return (
-              <div key={item.id} className="group bg-white rounded-[45px] p-6 shadow-xl border border-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 rounded-bl-[100px] -mr-10 -mt-10 group-hover:bg-rose-50 transition-colors duration-500"></div>
+              <div key={item.id} className="group bg-white rounded-[24px] md:rounded-[45px] p-3 md:p-6 shadow-xl border border-white hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex flex-col justify-between relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-20 h-20 md:w-32 md:h-32 bg-slate-50 rounded-bl-[60px] md:rounded-bl-[100px] -mr-6 -mt-6 md:-mr-10 md:-mt-10 group-hover:bg-rose-50 transition-colors duration-500"></div>
                 
-                <div className="relative mb-6">
+                <div className="relative mb-3 md:mb-6">
                   {/* Image Holder */}
-                  <div className="aspect-square rounded-[35px] overflow-hidden bg-slate-100 shadow-inner group-hover:scale-95 transition-transform duration-700">
+                  <div className="aspect-square rounded-[18px] md:rounded-[35px] overflow-hidden bg-slate-100 shadow-inner group-hover:scale-95 transition-transform duration-700">
                      <img 
                         src={imageUrl} 
                         alt={product.name} 
@@ -134,33 +134,33 @@ export default function WishlistPage() {
                   {/* Remove Button */}
                   <button 
                     onClick={() => removeFromWishlist(item.id)}
-                    className="absolute top-4 right-4 h-11 w-11 bg-white/90 backdrop-blur-md shadow-xl rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all duration-300 z-10 hover:scale-110"
+                    className="absolute top-2 right-2 md:top-4 md:right-4 h-8 w-8 md:h-11 md:w-11 bg-white/90 backdrop-blur-md shadow-xl rounded-lg md:rounded-2xl flex items-center justify-center text-rose-500 hover:bg-rose-500 hover:text-white transition-all duration-300 z-10 hover:scale-110"
                   >
-                    <Trash2 className="h-5 w-5" />
+                    <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
                   </button>
                   
                   {/* Floating Price Tag */}
-                  <div className="absolute -bottom-4 left-6 py-2.5 px-6 bg-slate-900 rounded-[18px] shadow-2xl border border-slate-800 flex items-center gap-2 group-hover:scale-105 transition-transform">
-                      <span className="text-[#ffc64d] font-black text-lg">${product.base_price}</span>
+                  <div className="absolute -bottom-2 md:-bottom-4 left-2 md:left-6 py-1 px-3 md:py-2.5 md:px-6 bg-slate-900 rounded-[12px] md:rounded-[18px] shadow-2xl border border-slate-800 flex items-center gap-2 group-hover:scale-105 transition-transform">
+                      <span className="text-[#ffc64d] font-black text-xs md:text-lg">${product.base_price}</span>
                   </div>
                 </div>
 
-                <div className="flex flex-col flex-1 pt-4">
-                  <div className="flex items-center gap-2 mb-2 text-[10px] font-black uppercase tracking-[0.2em] text-[#13C8B5]">
-                     <Zap className="h-3 w-3" />
+                <div className="flex flex-col flex-1 pt-3 md:pt-4">
+                  <div className="flex items-center gap-1 md:gap-2 mb-1 md:mb-2 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] text-[#13C8B5]">
+                     <Zap className="h-2 w-2 md:h-3 md:w-3" />
                      <span>Disponible</span>
                   </div>
-                  <h3 className="text-xl font-bold text-slate-800 mb-2 truncate group-hover:text-slate-900">{product.name}</h3>
-                  <p className="text-slate-400 text-xs font-medium line-clamp-2 leading-relaxed mb-6 h-8 opacity-80">
+                  <h3 className="text-xs md:text-xl font-bold text-slate-800 mb-1 md:mb-2 line-clamp-2 leading-tight group-hover:text-slate-900">{product.name}</h3>
+                  <p className="hidden md:block text-slate-400 text-xs font-medium line-clamp-2 leading-relaxed mb-6 h-8 opacity-80">
                     {product.description_short || 'Sin descripción disponible para este producto premium.'}
                   </p>
                   
-                  <div className="flex gap-2 mt-auto">
-                    <Button asChild className="flex-1 h-12 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">
-                       <Link href={`/productos/${product.slug}`}>Ver Detalles</Link>
+                  <div className="flex gap-2 mt-auto pt-2 md:pt-0">
+                    <Button asChild className="flex-1 h-8 md:h-12 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg md:rounded-2xl font-black text-[8px] md:text-[10px] uppercase tracking-widest transition-all">
+                       <Link href={`/productos/${product.slug}`}>Ver</Link>
                     </Button>
-                    <Button variant="outline" className="h-12 w-12 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-50 p-0">
-                       <ShoppingBag className="h-5 w-5" />
+                    <Button variant="outline" className="h-8 w-8 md:h-12 md:w-12 rounded-lg md:rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-800 hover:bg-slate-50 p-0">
+                       <ShoppingBag className="h-4 w-4 md:h-5 md:w-5" />
                     </Button>
                   </div>
                 </div>

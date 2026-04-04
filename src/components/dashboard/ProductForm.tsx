@@ -9,7 +9,9 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { Package, Tag, Ban, Save, Loader2, Link as LinkIcon } from 'lucide-react'
+import { Package, Tag, Ban, Save, Loader2, Link as LinkIcon, Hash } from 'lucide-react'
+import { TagInput } from './TagInput'
+import { SafeImage } from './SafeImage'
 
 export function ProductForm({ categories, initialData }: { categories: any[], initialData?: any }) {
   const router = useRouter()
@@ -27,6 +29,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
     initialData?.product_images || []
   )
   const [removedImageIds, setRemovedImageIds] = useState<string[]>([])
+  const [tags, setTags] = useState<string[]>(initialData?.tags || [])
 
   const handleRemoveImage = (id: string) => {
     setExistingImages(prev => prev.filter(img => img.id !== id))
@@ -42,6 +45,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
     if (categoryId && categoryId !== 'none') {
        formData.append('category_id', categoryId)
     }
+    formData.append('tags', tags.join(','))
 
     startTransition(async () => {
       let res;
@@ -60,7 +64,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-xl relative max-w-4xl max-h-full">
+    <form onSubmit={handleSubmit} className="space-y-8 bg-white p-8 rounded-3xl border border-gray-100 shadow-xl relative w-full max-h-full">
       {errorMsg && (
         <div className="bg-red-50 text-red-600 p-4 rounded-xl text-sm font-bold border border-red-100/50 flex items-center gap-2">
            <Ban className="h-5 w-5" />
@@ -103,7 +107,10 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
       {/* Row 2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-3">
-          <Label htmlFor="base_price" className="text-slate-700 font-bold ml-1">Precio Base (MXN) <span className="text-red-500">*</span></Label>
+          <Label htmlFor="base_price" className="text-slate-700 font-bold ml-1 flex items-center justify-between">
+            <span>Precio Base (MXN) <span className="text-red-500">*</span></span>
+            <span className="text-[10px] font-black text-primary uppercase tracking-tighter bg-primary/5 px-2 py-0.5 rounded-md italic">Usa 0 para Cotizar</span>
+          </Label>
           <div className="relative">
             <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-slate-400">$</span>
             <Input 
@@ -112,6 +119,7 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
               defaultValue={initialData?.base_price}
               type="number"
               step="0.01" 
+              lang="en-US"
               min="0"
               required 
               placeholder="0.00" 
@@ -172,18 +180,22 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
             <div className="mt-4">
                <p className="text-xs text-slate-500 font-medium ml-1 mb-2">Imágenes actuales (Haz clic en la X para eliminar)</p>
                <div className="flex flex-wrap gap-3">
-                 {existingImages.map(img => (
-                    <div key={img.id} className="relative w-16 h-16 rounded-xl border border-slate-100 overflow-hidden group">
-                       <img src={img.image_url} alt="Prod" className="w-full h-full object-cover" />
+                  {existingImages.map(img => (
+                    <div key={img.id} className="relative w-16 h-16 rounded-xl border border-slate-100 overflow-hidden group bg-slate-50">
+                       <SafeImage 
+                         src={img.image_url} 
+                         alt="Prod" 
+                         className="w-full h-full object-cover" 
+                       />
                        <button 
                          type="button" 
                          onClick={() => handleRemoveImage(img.id)}
-                         className="absolute inset-0 bg-red-600/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                         className="absolute inset-0 bg-red-600/80 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-20"
                        >
                          <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                        </button>
                     </div>
-                 ))}
+                  ))}
                </div>
             </div>
           )}
@@ -191,6 +203,16 @@ export function ProductForm({ categories, initialData }: { categories: any[], in
              <input type="hidden" name="removed_images" value={removedImageIds.join(',')} />
           )}
         </div>
+      </div>
+
+      {/* Row 4 - Tags Manager */}
+      <div className="border-t border-gray-50 pt-8 mt-2">
+          <TagInput 
+            tags={tags} 
+            setTags={setTags} 
+            label="Etiquetas del Producto" 
+            placeholder="Escribe una etiqueta (Ej. Gaming, Premium) y presiona Enter..."
+          />
       </div>
 
       {/* Descripciones */}

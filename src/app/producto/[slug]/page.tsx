@@ -22,22 +22,32 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     notFound()
   }
 
-  // Fetch related products (same category, different id)
-  const { data: relatedProducts } = await supabase
-    .from('products')
-    .select('*, product_images(*), discounts(*)')
-    .eq('category_id', product.category_id)
-    .neq('id', product.id)
-    .eq('is_active', true)
-    .limit(4)
-
-  // Fetch if it belongs to a package
-  const { data: packageRel } = await supabase
-    .from('package_products')
-    .select('package_id, packages(*)')
-    .eq('product_id', product.id)
-    .limit(1)
-    .single()
+  // Paralellize fetches for speed
+  const [
+    { data: relatedProducts },
+    { data: packageRel },
+    { data: reviews }
+  ] = await Promise.all([
+    supabase
+      .from('products')
+      .select('*, product_images(*), discounts(*)')
+      .eq('category_id', product.category_id)
+      .neq('id', product.id)
+      .eq('is_active', true)
+      .limit(4),
+    supabase
+      .from('package_products')
+      .select('package_id, packages(*)')
+      .eq('product_id', product.id)
+      .limit(1)
+      .single(),
+    supabase
+      .from('reviews')
+      .select('*')
+      .eq('product_id', product.id)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+  ])
 
   const packageOffer = packageRel?.packages 
 
@@ -57,6 +67,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         product={product} 
         relatedProducts={relatedProducts || []} 
         packageOffer={packageOffer}
+        reviews={reviews || []}
       />
     </div>
   )

@@ -42,13 +42,13 @@ export function ImageUploader({ onUploadComplete, existingImages = [] }: ImageUp
         const filePath = `products/${fileName}`
 
         const { error: uploadError, data } = await supabase.storage
-          .from('product-images')
+          .from('product_images')
           .upload(filePath, file)
 
         if (uploadError) throw uploadError
 
         const { data: { publicUrl } } = supabase.storage
-          .from('product-images')
+          .from('product_images')
           .getPublicUrl(filePath)
 
         newUrls.push(publicUrl)

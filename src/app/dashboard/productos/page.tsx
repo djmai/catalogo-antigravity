@@ -68,7 +68,7 @@ export default async function AdminProductsPage() {
           <TableBody>
             {products && products.length > 0 ? (
               products.map((product) => {
-                const mainImage = product.product_images?.[0]?.image_url || '/placeholder-product.png'
+                const mainImage = product.product_images?.[0]?.image_url || null
                 const hasActiveDiscount = product.discounts?.some((d: any) => {
                   const now = new Date()
                   return now >= new Date(d.start_date) && now <= new Date(d.end_date)

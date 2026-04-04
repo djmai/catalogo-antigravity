@@ -46,6 +46,14 @@ export default async function DashboardPage() {
     .select('*, product_images(image_url)')
     .order('created_at', { ascending: false })
     .limit(3)
+  
+  const { data: brandingData } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'site_branding')
+    .single()
+    
+  const branding = brandingData?.value || { site_name: 'PREMIUM HUB' }
 
   // STATS for Admins/Editors
   if (isAdmin || isEditor) {
@@ -63,7 +71,7 @@ export default async function DashboardPage() {
         <div className="flex-1 space-y-8">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h1 className="text-4xl font-black text-[#2B364A] tracking-tighter uppercase italic">PREMIUM HUB</h1>
+              <h1 className="text-4xl font-black text-[#2B364A] tracking-tighter uppercase italic">{branding.site_name}</h1>
               <p className="text-slate-400 font-bold text-xs uppercase tracking-widest">{new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', weekday: 'long' })}</p>
             </div>
             <div className="flex items-center gap-3">
@@ -71,7 +79,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          <div className="relative overflow-hidden bg-rose-400 rounded-[50px] p-12 flex items-center justify-between group shadow-2xl shadow-rose-100">
+          <div className="hidden lg:flex relative overflow-hidden bg-rose-400 rounded-[50px] p-12 items-center justify-between group shadow-2xl shadow-rose-100">
              <div className="relative z-10 space-y-4">
                 <h2 className="text-5xl font-black text-white italic tracking-tighter uppercase">¡Buen trabajo!</h2>
                 <p className="text-white/90 font-bold text-lg max-w-xs leading-tight">Has alcanzado record de interacciones en el catálogo esta semana.</p>
@@ -85,10 +93,10 @@ export default async function DashboardPage() {
              <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
-             <StatCard title="Productos" value={productCount || 0} icon={Package} color="text-[#2B364A]" />
-             <StatCard title="Categorías" value={categoryCount || 0} icon={Tag} color="text-[#13C8B5]" />
-             <StatCard title="Usuarios" value={userCount || 0} icon={Users} color="text-indigo-600" />
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6 md:gap-8">
+             <div className="col-span-1"><StatCard title="Productos" value={productCount || 0} icon={Package} color="text-[#2B364A]" /></div>
+             <div className="col-span-1"><StatCard title="Categorías" value={categoryCount || 0} icon={Tag} color="text-[#13C8B5]" /></div>
+             <div className="col-span-2 sm:col-span-1"><StatCard title="Usuarios" value={userCount || 0} icon={Users} color="text-indigo-600" /></div>
           </div>
 
           <div className="space-y-6">
@@ -99,8 +107,8 @@ export default async function DashboardPage() {
              
              <div className="grid grid-cols-1 gap-6">
                 {recentProducts?.map((product: any) => (
-                  <div key={product.id} className="bg-white p-8 rounded-[40px] border border-white shadow-xl shadow-slate-200/50 flex items-center gap-8 group hover:scale-[1.01] transition-all">
-                     <div className="h-28 w-28 rounded-3xl overflow-hidden bg-slate-50 shrink-0 border-4 border-slate-50 shadow-inner p-3 relative">
+                  <div key={product.id} className="bg-white p-6 md:p-8 rounded-[30px] md:rounded-[40px] border border-white shadow-xl shadow-slate-200/50 flex flex-col md:flex-row items-center gap-6 md:gap-8 group hover:scale-[1.01] transition-all text-center md:text-left">
+                     <div className="h-24 w-24 md:h-28 md:w-28 rounded-3xl overflow-hidden bg-slate-50 shrink-0 border-4 border-slate-50 shadow-inner p-3 relative">
                          <SafeImage 
                             src={product.product_images?.[product.product_images.length - 1]?.image_url} 
                             alt={product.name}
@@ -108,15 +116,15 @@ export default async function DashboardPage() {
                          />
                          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                      </div>
-                     <div className="flex-1">
-                        <h4 className="text-xl font-black text-[#2B364A] group-hover:text-black transition-colors">{product.name}</h4>
-                        <div className="flex items-center gap-3 mt-2">
-                           <span className="text-xs font-black text-[#13C8B5] tracking-widest bg-[#13C8B5]/5 px-3 py-1 rounded-full uppercase">${product.base_price}</span>
+                     <div className="flex-1 w-full flex flex-col items-center md:items-start">
+                        <h4 className="text-lg md:text-xl font-black text-[#2B364A] group-hover:text-black transition-colors">{product.name}</h4>
+                        <div className="flex flex-wrap justify-center md:justify-start items-center gap-3 mt-2">
+                           <span className="text-[10px] md:text-xs font-black text-[#13C8B5] tracking-widest bg-[#13C8B5]/5 px-3 py-1 rounded-full uppercase">${product.base_price}</span>
                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">{formatDistanceToNow(new Date(product.created_at), { addSuffix: true, locale: es })}</span>
                         </div>
                      </div>
-                     <Link href={`/dashboard/productos/${product.slug}`} className="h-14 w-14 flex items-center justify-center bg-slate-900 rounded-[20px] text-white hover:bg-[#13C8B5] hover:scale-110 transition-all shadow-xl active:scale-95">
-                        <ArrowRight className="h-6 w-6" />
+                     <Link href={`/dashboard/productos/${product.slug}`} className="h-12 w-12 md:h-14 md:w-14 flex items-center justify-center bg-slate-900 rounded-[20px] text-white hover:bg-[#13C8B5] md:hover:scale-110 transition-all shadow-xl active:scale-95 shrink-0">
+                        <ArrowRight className="h-5 w-5 md:h-6 md:w-6" />
                      </Link>
                   </div>
                 ))}
@@ -195,7 +203,7 @@ export default async function DashboardPage() {
               <h1 className="text-5xl font-black text-[#2B364A] tracking-tighter uppercase italic leading-none">
                  HOLA, {profile?.full_name ? profile.full_name.split(' ')[0] : user?.email?.split('@')[0]}
               </h1>
-              <p className="text-slate-400 text-lg font-bold uppercase tracking-wide">¡Qué placer verte de nuevo en PREMIUM STORE!</p>
+              <p className="text-slate-400 text-lg font-bold uppercase tracking-wide">¡Qué placer verte de nuevo en {branding.site_name}!</p>
            </div>
            
            <div className="bg-white p-6 rounded-[35px] border border-slate-100 shadow-xl shadow-slate-100/50 flex items-center gap-5 min-w-[280px]">
@@ -299,20 +307,20 @@ export default async function DashboardPage() {
               <button className="text-slate-300 text-xs font-black uppercase tracking-widest hover:text-indigo-500 transition-colors">Limpiar historial</button>
            </div>
            
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-10">
+           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 md:gap-8 pb-10">
               {recentProducts?.map((product: any) => (
-                <div key={product.id} className="bg-white p-10 rounded-[50px] border border-slate-50 shadow-xl shadow-slate-100/50 flex flex-col items-center text-center group hover:scale-[1.03] transition-all duration-700 relative overflow-hidden">
-                   <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100 group-hover:bg-indigo-100 transition-all"></div>
-                   <div className="h-40 w-40 rounded-[50px] overflow-hidden bg-slate-50 p-6 mb-8 shadow-inner group-hover:rotate-6 transition-transform">
+                <div key={product.id} className="bg-white p-5 md:p-10 rounded-[30px] md:rounded-[50px] border border-slate-50 shadow-xl shadow-slate-100/50 flex flex-col items-center text-center group hover:scale-[1.03] transition-all duration-700 relative overflow-hidden">
+                   <div className="absolute top-0 left-0 w-full h-1 md:h-1.5 bg-slate-100 group-hover:bg-indigo-100 transition-all"></div>
+                   <div className="h-24 w-24 md:h-40 md:w-40 rounded-[24px] md:rounded-[50px] overflow-hidden bg-slate-50 p-4 md:p-6 mb-4 md:mb-8 shadow-inner group-hover:rotate-6 transition-transform">
                        <SafeImage 
                           src={product.product_images?.[product.product_images.length - 1]?.image_url} 
                           alt={product.name}
                           className="h-full w-full object-contain" 
                        />
                    </div>
-                   <h4 className="text-xl font-black text-slate-800 truncate w-full mb-2 tracking-tight">{product.name}</h4>
-                   <p className="text-xs font-black text-[#13C8B5] tracking-[0.2em] uppercase">${product.base_price}</p>
-                   <Link href={`/dashboard/productos/${product.slug}`} className="mt-8 h-12 px-8 bg-slate-50 hover:bg-slate-900 hover:text-white rounded-2xl text-slate-400 font-black text-[10px] uppercase tracking-widest transition-all">Ver Detalles</Link>
+                   <h4 className="text-sm md:text-xl font-black text-slate-800 line-clamp-1 w-full mb-1 md:mb-2 tracking-tight">{product.name}</h4>
+                   <p className="text-[10px] md:text-xs font-black text-[#13C8B5] tracking-widest uppercase">${product.base_price}</p>
+                   <Link href={`/dashboard/productos/${product.slug}`} className="mt-4 md:mt-8 h-9 md:h-12 w-full px-2 md:px-8 bg-slate-50 hover:bg-slate-900 hover:text-white rounded-2xl md:rounded-2xl text-slate-400 font-black text-[9px] md:text-[10px] uppercase tracking-widest transition-all flex items-center justify-center">Ver <span className="hidden md:inline ml-1">Detalles</span></Link>
                 </div>
               ))}
            </div>
@@ -364,16 +372,16 @@ export default async function DashboardPage() {
 
 function StatCard({ title, value, icon: Icon, color }: any) {
   return (
-    <Card className="border-none shadow-xl shadow-slate-100 rounded-[50px] p-10 hover:shadow-2xl transition-all group overflow-hidden relative border border-white">
-      <div className={`absolute top-0 right-0 p-8 opacity-5 group-hover:scale-125 transition-transform ${color}`}>
-        <Icon className="h-32 w-32" />
+    <Card className="border-none shadow-lg shadow-slate-100/50 rounded-[28px] lg:rounded-[50px] p-5 lg:p-10 hover:shadow-2xl transition-all group overflow-hidden relative border border-white h-full">
+      <div className={`absolute top-0 right-0 p-3 lg:p-8 opacity-5 group-hover:scale-125 transition-transform ${color}`}>
+        <Icon className="h-20 w-20 lg:h-32 lg:w-32" />
       </div>
-      <div className="space-y-2 relative z-10">
-         <div className={`h-12 w-12 ${color.replace('text-', 'bg-')}/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner`}>
-            <Icon className={`h-6 w-6 ${color}`} />
+      <div className="space-y-1 lg:space-y-2 relative z-10 flex flex-col items-center sm:items-start text-center sm:text-left">
+         <div className={`h-10 w-10 lg:h-12 lg:w-12 ${color.replace('text-', 'bg-')}/10 rounded-xl lg:rounded-2xl flex items-center justify-center mb-2 lg:mb-6 shadow-inner`}>
+            <Icon className={`h-5 w-5 lg:h-6 lg:w-6 ${color}`} />
          </div>
-         <h3 className="text-5xl font-black text-[#2B364A] tracking-tighter">{value}</h3>
-         <p className="text-[11px] font-black text-slate-300 uppercase tracking-[0.2em] mt-2">{title}</p>
+         <h3 className="text-3xl lg:text-5xl font-black text-[#2B364A] tracking-tighter hover:scale-110 transition-transform origin-left">{value}</h3>
+         <p className="text-[9px] lg:text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">{title}</p>
       </div>
     </Card>
   )

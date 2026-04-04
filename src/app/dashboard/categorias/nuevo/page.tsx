@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function NewCategoryPage() {
   return (
-    <div className="space-y-8 pb-20 max-w-2xl">
+    <div className="space-y-8 pb-20 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-3">
            <div className="h-12 w-12 bg-amber-500/10 text-amber-500 rounded-xl flex items-center justify-center">

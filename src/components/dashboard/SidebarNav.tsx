@@ -4,7 +4,6 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { 
-  ChevronRight,
   MessageSquare,
   LayoutDashboard,
   Package,
@@ -91,7 +90,7 @@ export function SidebarNav({ isAdmin, isEditor }: { isAdmin: boolean, isEditor: 
         ))}
       </nav>
 
-      <div className="p-6 z-10 relative w-full pb-6 mt-auto shrink-0 border-t border-white/5 pt-8">
+      <div className="p-6 z-10 relative w-full pb-6 mt-auto flex-shrink-0 border-t border-white/5 pt-8">
          <button 
            onClick={handleLogout}
            className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl text-sm font-bold text-slate-400 hover:text-white hover:bg-white/5 transition-all group mb-6"

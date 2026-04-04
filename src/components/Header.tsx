@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { ShieldCheck, User, LayoutDashboard, LogIn, Menu, X } from 'lucide-react'
@@ -17,20 +17,21 @@ export function Header({ user }: { user?: any }) {
   })
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  useEffect(() => {
-    async function fetchBranding() {
-      const { data } = await supabase
-        .from('site_settings')
-        .select('value')
-        .eq('key', 'site_branding')
-        .single()
-      
-      if (data?.value) {
-        setBranding(data.value)
-      }
+  const fetchBranding = useCallback(async () => {
+    const { data } = await supabase
+      .from('site_settings')
+      .select('value')
+      .eq('key', 'site_branding')
+      .single()
+    
+    if (data?.value) {
+      setBranding(data.value)
     }
+  }, [supabase])
+
+  useEffect(() => {
     fetchBranding()
-  }, [])
+  }, [fetchBranding])
 
   // Close mobile menu on path change
   useEffect(() => {

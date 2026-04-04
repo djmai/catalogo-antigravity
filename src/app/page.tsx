@@ -7,7 +7,7 @@ import { ProductCard } from '@/components/ProductCard'
 import { PackageCard } from '@/components/PackageCard'
 import { ProductFilters } from '@/components/ProductFilters'
 import { Input } from '@/components/ui/input'
-import { Search, Loader2, SlidersHorizontal } from 'lucide-react'
+import { Search, SlidersHorizontal } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Button } from '@/components/ui/button'
 import {

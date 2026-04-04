@@ -36,7 +36,7 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Top Image Container (Slight Pop-Out) */}
-        <div className="relative w-full px-4 md:px-6 -mt-8 md:-mt-12 h-[180px] md:h-[240px] z-20 flexShrink-0">
+        <div className="relative w-full px-4 md:px-6 -mt-8 md:-mt-12 h-[180px] md:h-[240px] z-20 shrink-0">
            <SafeImage
               src={mainImage}
               alt={product.name}

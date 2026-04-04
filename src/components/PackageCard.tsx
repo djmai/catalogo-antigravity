@@ -68,7 +68,7 @@ export function PackageCard({ pkg }: PackageCardProps) {
         </div>
 
         {/* Top Image Container (Carousel Pop-Out) */}
-        <div className="relative w-full px-4 md:px-6 -mt-8 md:-mt-12 h-[180px] md:h-[240px] z-20 flexShrink-0">
+        <div className="relative w-full px-4 md:px-6 -mt-8 md:-mt-12 h-[180px] md:h-[240px] z-20 shrink-0">
            <SafeImage
               key={currentImage} // forces remount animation on cycle
               src={currentImage}

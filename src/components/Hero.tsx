@@ -2,8 +2,7 @@
 
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, Package } from 'lucide-react'
-import Image from 'next/image'
+import { Package } from 'lucide-react'
 import { SafeImage } from './dashboard/SafeImage'
 import { createClient } from '@/lib/supabase/client'
 import { useState, useEffect } from 'react'
@@ -20,7 +19,8 @@ export function Hero() {
     title_l2: 'DE ESTA SEMANA',
     description: 'Explora nuestra colección curada con los mejores productos tecnológicos y de estilo de vida de la industria. Ofertas imperdibles por tiempo limitado.',
     button_text: 'OBTÉN HASTA 50% DE DESCUENTO',
-    image_url: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=1000'
+    image_url: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=1000',
+    bg_color: '#13C8B5'
   })
 
   useEffect(() => {

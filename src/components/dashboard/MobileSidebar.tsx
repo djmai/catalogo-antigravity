@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Menu, X } from 'lucide-react'
+import Image from 'next/image'
 import { SidebarNav } from './SidebarNav'
 import { Button } from '@/components/ui/button'
 
@@ -62,7 +63,13 @@ export function MobileSidebar({ isAdmin, isEditor, profile }: MobileSidebarProps
                <div className="relative">
                  <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center overflow-hidden border-4 border-[#7375A5] shadow-xl">
                     {profile?.avatar_url ? (
-                      <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                      <Image 
+                        src={profile.avatar_url} 
+                        alt="Profile" 
+                        fill 
+                        className="object-cover" 
+                        unoptimized
+                      />
                     ) : (
                       <span className="text-[#2B364A] text-3xl font-black uppercase">
                         {profile?.email?.[0] || 'U'}

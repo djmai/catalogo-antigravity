@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Heart, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'react-hot-toast'
@@ -16,27 +16,27 @@ export function WishlistToggle({ productId, className = "" }: WishlistToggleProp
   const [toggling, setToggling] = useState(false)
   const supabase = createClient()
 
-  useEffect(() => {
-    const checkWishlist = async () => {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        setLoading(false)
-        return
-      }
-
-      const { data } = await supabase
-        .from('wishlist')
-        .select('id')
-        .eq('user_id', user.id)
-        .eq('product_id', productId)
-        .single()
-      
-      setIsInWishlist(!!data)
+  const checkWishlist = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
       setLoading(false)
+      return
     }
 
+    const { data } = await supabase
+      .from('wishlist')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('product_id', productId)
+      .single()
+    
+    setIsInWishlist(!!data)
+    setLoading(false)
+  }, [productId, supabase])
+
+  useEffect(() => {
     checkWishlist()
-  }, [productId])
+  }, [checkWishlist])
 
   const toggleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault()
